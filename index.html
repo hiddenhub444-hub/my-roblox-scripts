@@ -3,44 +3,81 @@
 <head>
     <meta charset="UTF-8">
     <title>Exploiters/Roblox.com</title>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <style>
         body { background-color: #0b1119; color: white; font-family: sans-serif; margin: 0; padding: 0; }
         .navbar { display: flex; justify-content: space-between; padding: 15px 30px; background: #111926; align-items: center; border-bottom: 1px solid #1c2636; }
         .logo { color: #007bff; font-weight: bold; font-size: 20px; }
         .login-btn { background: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; }
         .search-area { text-align: center; padding: 60px 20px; }
+        .search-container { display: flex; justify-content: center; }
         input { padding: 15px; width: 400px; border-radius: 8px 0 0 8px; border: none; background: #1c2636; color: white; outline: none; }
         .enter-btn { padding: 15px 25px; background: #007bff; border: none; color: white; border-radius: 0 8px 8px 0; cursor: pointer; font-weight: bold; }
         .results-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; padding: 0 40px; }
-        .card { background: #1c2636; border-radius: 12px; overflow: hidden; border: 1px solid #2d3748; }
+        .card { background: #1c2636; border-radius: 12px; overflow: hidden; border: 1px solid #2d3748; padding-bottom: 15px; }
         .card img { width: 100%; height: 180px; object-fit: cover; }
         .card-info { padding: 15px; text-align: left; }
-        .view-btn { width: 100%; margin-top: 10px; padding: 10px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        .view-btn { background: #007bff; color: white; border: none; width: 90%; margin: 0 5%; padding: 10px; border-radius: 5px; cursor: pointer; font-weight: bold; }
     </style>
 </head>
 <body>
+
     <div class="navbar">
         <div class="logo">Exploiters/roblox.com</div>
-        <button class="login-btn" onclick="googleLogin()">Login with Google</button>
+        <button class="login-btn" onclick="window.location.href='https://accounts.google.com/'">Login with Google</button>
     </div>
+
     <div class="search-area">
         <h1>Search Results</h1>
-        <div style="display: flex; justify-content: center;">
+        <div class="search-container">
             <input type="text" id="gameSearch" placeholder="Search for a game...">
             <button class="enter-btn" onclick="runSearch()">Enter</button>
         </div>
     </div>
-    <div class="results-grid" id="grid">
+
+    <div class="results-grid" id="script-grid">
         </div>
+
     <script>
-        function googleLogin() {
-            window.location.href = "https://accounts.google.com/v3/signin/identifier";
-        }
+        // 1. YOUR FIREBASE CONFIG (Get this from Firebase Console)
+        var firebaseConfig = {
+            apiKey: "PASTE_YOUR_API_KEY_HERE",
+            databaseURL: "PASTE_YOUR_DATABASE_URL_HERE",
+            projectId: "your-project-id",
+        };
+        firebase.initializeApp(firebaseConfig);
+        var database = firebase.database();
+
+        // 2. FETCH DATA FROM DATABASE
+        database.ref('scripts').on('value', (snapshot) => {
+            const grid = document.getElementById('script-grid');
+            grid.innerHTML = ""; // Clear grid
+            
+            snapshot.forEach((childSnapshot) => {
+                const data = childSnapshot.val();
+                
+                // Create the Card HTML
+                grid.innerHTML += `
+                    <div class="card">
+                        <img src="${data.img}" alt="game">
+                        <div class="card-info">
+                            <h3 style="margin:5px 0;">${data.name}</h3>
+                            <p style="color: #888; font-size: 12px;">Script Ready</p>
+                        </div>
+                        <button class="view-btn" onclick="alert('Loadstring: ${data.script}')">View Script</button>
+                    </div>
+                `;
+            });
+        });
+
+        // 3. SEARCH LOGIC
         function runSearch() {
             let filter = document.getElementById('gameSearch').value.toLowerCase();
             let cards = document.querySelectorAll('.card');
             cards.forEach(card => {
-                card.style.display = card.innerText.toLowerCase().includes(filter) ? "block" : "none";
+                let text = card.innerText.toLowerCase();
+                card.style.display = text.includes(filter) ? "block" : "none";
             });
         }
     </script>
