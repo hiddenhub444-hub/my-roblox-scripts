@@ -1,21 +1,125 @@
-<script>
-    // Make the Login button work
-    document.querySelector('.login-btn').onclick = function() {
-        alert("Google Login is being connected! For now, you are logged in as Admin.");
-    };
-
-    // Make the Enter button work for search
-    document.querySelector('.enter-btn').onclick = function() {
-        let searchTerm = document.querySelector('input').value.toLowerCase();
-        let cards = document.querySelectorAll('.card');
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exploiters/Roblox.com</title>
+    <style>
+        /* Modern Dark Theme */
+        body { background-color: #0b1119; color: white; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; }
         
-        cards.forEach(card => {
-            let title = card.querySelector('h3').innerText.toLowerCase();
-            if(title.includes(searchTerm)) {
-                card.style.display = "block";
-            } else {
-                card.style.display = "none";
-            }
-        });
-    };
-</script>
+        /* Navbar */
+        .navbar { display: flex; justify-content: space-between; align-items: center; padding: 15px 30px; background: #111926; border-bottom: 1px solid #1c2636; }
+        .logo { font-weight: bold; font-size: 20px; color: #007bff; text-decoration: none; }
+        .user-area { display: flex; align-items: center; gap: 15px; }
+        .pfp { width: 40px; height: 40px; border-radius: 50%; background: #333; border: 2px solid #007bff; }
+        .login-btn { background: #007bff; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+
+        /* Search Section */
+        .search-section { text-align: center; padding: 60px 20px; }
+        h1 { font-size: 32px; margin-bottom: 20px; }
+        .search-container { display: flex; justify-content: center; gap: 10px; }
+        input[type="text"] { width: 450px; padding: 14px; border-radius: 8px; border: 1px solid #1c2636; background: #1c2636; color: white; outline: none; }
+        .enter-btn { background: #007bff; color: white; border: none; padding: 14px 28px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+
+        /* Script Cards Grid (Matching your screenshot) */
+        .results-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 25px; padding: 0 40px 100px 40px; }
+        .card { background: #1c2636; border-radius: 12px; overflow: hidden; position: relative; border: 1px solid #2d3748; transition: transform 0.2s; }
+        .card:hover { transform: translateY(-5px); }
+        .card img { width: 100%; height: 180px; object-fit: cover; }
+        
+        /* Badges */
+        .badge-views { position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.7); padding: 4px 10px; border-radius: 20px; font-size: 12px; display: flex; align-items: center; gap: 5px; }
+        .badge-time { position: absolute; top: 10px; right: 10px; background: rgba(255,255,255,0.9); color: black; padding: 4px 10px; border-radius: 20px; font-size: 12px; }
+        
+        .card-info { padding: 20px; }
+        .key-system { background: #f1c40f; color: black; padding: 4px 12px; border-radius: 6px; font-weight: bold; font-size: 12px; display: inline-block; margin-bottom: 10px; }
+        .game-desc { color: #007bff; font-size: 14px; margin-bottom: 5px; }
+        .script-title { font-size: 18px; font-weight: bold; margin: 0; }
+        .copy-btn { width: 100%; margin-top: 15px; padding: 10px; background: transparent; border: 1px solid #007bff; color: #007bff; border-radius: 6px; cursor: pointer; font-weight: bold; }
+        .copy-btn:hover { background: #007bff; color: white; }
+
+        /* Footer */
+        footer { padding: 30px; text-align: center; background: #0b1119; }
+        footer a { color: #4a5568; text-decoration: none; font-size: 14px; }
+        footer a:hover { color: white; }
+    </style>
+</head>
+<body>
+
+    <div class="navbar">
+        <a href="#" class="logo">Exploiters/roblox.com</a>
+        <div class="user-area">
+            <button class="login-btn" onclick="googleLogin()">Login with Google</button>
+            <div class="pfp"></div>
+        </div>
+    </div>
+
+    <div class="search-section">
+        <h1>Search Results</h1>
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Search for a game...">
+            <button class="enter-btn" onclick="searchScripts()">Enter</button>
+        </div>
+    </div>
+
+    <div class="results-grid" id="scriptGrid">
+        <div class="card">
+            <span class="badge-views">👁 908</span>
+            <span class="badge-time">4 days ago</span>
+            <img src="https://via.placeholder.com/320x180/007bff/ffffff?text=OP+Auto+Survive" alt="game">
+            <div class="card-info">
+                <div class="key-system">Key System</div>
+                <div class="game-desc">Defend your base from 67</div>
+                <h3 class="script-title">OP Auto Survive All Waves</h3>
+                <button class="copy-btn" onclick="copyScript('print(\'Script 1 Copied!\')')">Get Script</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <span class="badge-views">👁 716.2k</span>
+            <span class="badge-time">3 months ago</span>
+            <img src="https://via.placeholder.com/320x180/f1c40f/000000?text=Auto+Draw" alt="game">
+            <div class="card-info">
+                <div class="key-system">Key System</div>
+                <div class="game-desc">Draw Me! 🎨</div>
+                <h3 class="script-title">Simple Auto Draw</h3>
+                <button class="copy-btn" onclick="copyScript('print(\'Script 2 Copied!\')')">Get Script</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <a href="tos.html">Terms of Service</a>
+    </footer>
+
+    <script>
+        // Search Functionality
+        function searchScripts() {
+            let input = document.getElementById('searchInput').value.toLowerCase();
+            let cards = document.querySelectorAll('.card');
+            
+            cards.forEach(card => {
+                let title = card.querySelector('.script-title').innerText.toLowerCase();
+                if (title.includes(input)) {
+                    card.style.display = "block";
+                } else {
+                    card.style.display = "none";
+                }
+            });
+        }
+
+        // Login Alert
+        function googleLogin() {
+            alert("Redirecting to Google Secure Login...");
+        }
+
+        // Copy Script Function
+        function copyScript(text) {
+            navigator.clipboard.writeText(text);
+            alert("Script copied to clipboard!");
+        }
+    </script>
+
+</body>
+</html>
